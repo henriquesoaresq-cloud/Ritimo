@@ -9,6 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="Ritmo" />
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
   <title>Ritmo — Rotina, Rank & Finanças (v2)</title>
   <style>
     :root {
@@ -458,7 +459,7 @@
     }
     .bar-fixed { height: 100%; background: var(--purple); transition: width 0.3s ease; }
     .bar-variable { height: 100%; background: var(--amber); transition: width 0.3s ease; }
-    .month-label { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; text-transform: capitalize; font-weight: 700; }
+    .month-label { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; font-weight: 700; }
 
     /* BOTTOM NAVIGATION */
     .bottom-nav {
@@ -582,6 +583,52 @@
 
     .empty-msg { text-align: center; padding: 18px 10px; color: var(--text-muted); font-size: 13px; }
     .settings-note { background: var(--bg-card-soft); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-size: 12px; color: var(--text-muted); }
+
+    /* ===== PLANO FINANCEIRO ===== */
+    .alert-list { display: flex; flex-direction: column; gap: 8px; }
+    .alert-item {
+      display: flex; gap: 10px; align-items: flex-start;
+      border: 1px solid var(--border); border-left-width: 4px; border-radius: 12px;
+      padding: 10px 12px; background: var(--bg-card-soft);
+    }
+    .alert-item.red { border-left-color: var(--danger); background: rgba(239, 68, 68, 0.08); }
+    .alert-item.amber { border-left-color: var(--amber); background: rgba(245, 158, 11, 0.08); }
+    .alert-item.blue { border-left-color: #60a5fa; }
+    .alert-item.green { border-left-color: var(--emerald); background: rgba(16, 185, 129, 0.07); }
+    .alert-ico { font-size: 18px; line-height: 1.2; }
+    .alert-title { font-size: 13.5px; font-weight: 700; }
+    .alert-detail { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+
+    .donut-wrap { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .donut-legend { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 7px; }
+    .legend-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+    .legend-row .lv { margin-left: auto; font-weight: 700; white-space: nowrap; }
+    .legend-row .lp { color: var(--text-muted); font-size: 11px; min-width: 34px; text-align: right; }
+    .legend-note { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .step { display: flex; gap: 10px; background: var(--bg-card-soft); border: 1px solid var(--border); border-radius: 12px; padding: 11px 12px; margin-bottom: 8px; }
+    .step-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; background: var(--bg-main); border: 2px solid #475569; flex: none; }
+    .step.now { border-color: rgba(255, 70, 85, 0.6); }
+    .step.now .step-num { border-color: var(--accent); color: var(--accent); }
+    .step.done { opacity: 0.7; }
+    .step.done .step-num { background: var(--emerald); border-color: var(--emerald); color: #052e16; }
+    .step-title { font-size: 13.5px; font-weight: 700; }
+    .step-body { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+    .chip { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: var(--bg-main); border: 1px solid var(--border); color: var(--text-muted); margin: 6px 4px 0 0; }
+    .mini-bar { height: 8px; background: #1e293b; border-radius: 999px; overflow: hidden; margin-top: 8px; }
+    .mini-bar > div { height: 100%; background: linear-gradient(90deg, var(--emerald), var(--cyan)); }
+
+    .lbl { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
+    .cfg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0; }
+    .cfg-grid input, .cfg-grid select { width: 100%; min-width: 0; }
+    details.cfg > summary { cursor: pointer; font-weight: 700; font-size: 15px; list-style: none; }
+    details.cfg > summary::-webkit-details-marker { display: none; }
+    details.cfg[open] > summary { margin-bottom: 4px; }
+    .card-row { display: flex; align-items: center; gap: 6px; background: var(--bg-card-soft); border: 1px solid var(--border); border-radius: 11px; padding: 8px 10px; margin-bottom: 6px; }
+    .card-row input { min-width: 0; padding: 6px 8px; font-size: 16px; }
+    .sim-result { background: var(--bg-card-soft); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-size: 13px; }
+    .sim-result strong { color: var(--cyan); font-size: 17px; }
   </style>
 </head>
 <body>
@@ -831,6 +878,26 @@
     <section id="tab-financas" class="tab-section">
       <div class="month-label" id="finMonthLabel"></div>
 
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🚦 Alertas do mês</div>
+          <span class="badge" id="finAlertsBadge">—</span>
+        </div>
+        <div id="finAlerts" class="alert-list"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🍩 Para onde vai a renda</div>
+          <span class="badge">sem o VA</span>
+        </div>
+        <div class="donut-wrap">
+          <svg id="finDonut" viewBox="0 0 120 120" width="140" height="140" role="img" aria-label="Distribuição da renda do mês"></svg>
+          <div class="donut-legend" id="finDonutLegend"></div>
+        </div>
+      </div>
+
+
       <div class="stats-grid">
         <div class="stat-box">
           <div class="stat-label">💰 Entradas (Mês)</div>
@@ -916,6 +983,65 @@
           <div class="card-title">💰 Entradas Lançadas</div>
         </div>
         <div id="incomesList" class="item-list"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">💡 Onde aplicar o dinheiro</div>
+          <span class="badge">na ordem</span>
+        </div>
+        <div id="finIdeas"></div>
+        <div style="font-size:10.5px; color:var(--text-muted); margin-top:6px;">Conteúdo educativo, não é recomendação de investimento. Confira taxas, prazos e garantias antes de aplicar.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🧮 Simulador de poupança</div>
+        </div>
+        <div class="form-row">
+          <div style="flex:1; min-width:100px;"><div class="lbl">Aporte/mês (R$)</div><input type="number" id="simAporte" onchange="runSim()" style="width:100%; min-width:0;" /></div>
+          <div style="flex:1; min-width:80px;"><div class="lbl">Meses</div><input type="number" id="simMonths" onchange="runSim()" style="width:100%; min-width:0;" /></div>
+          <div style="flex:1; min-width:100px;"><div class="lbl">Taxa (% ao ano)</div><input type="number" step="0.1" id="simRate" onchange="runSim()" style="width:100%; min-width:0;" /></div>
+        </div>
+        <div class="sim-result" id="simResult"></div>
+        <div style="font-size:10.5px; color:var(--text-muted); margin-top:6px;">Estimativa bruta, sem imposto de renda e sem inflação. A taxa é uma hipótese sua: a Selic ficou perto de 14% ao ano em 2026 (confira o valor atual no site do Banco Central) e CDBs e fundos costumam render uma porcentagem do CDI.</div>
+      </div>
+
+      <div class="card">
+        <details class="cfg" id="planCfg">
+          <summary>⚙️ Plano financeiro (VA, poupança, reserva, cartões)</summary>
+
+          <div class="cfg-grid">
+            <div><div class="lbl">Auxílio-alimentação / VA (R$/mês)</div><input type="number" step="0.01" id="planVa" onchange="setPlanNum('va','planVa')" /></div>
+            <div><div class="lbl">Meta de poupança (R$/mês)</div><input type="number" step="0.01" id="planGoal" onchange="setPlanNum('savingsGoal','planGoal')" /></div>
+            <div><div class="lbl">Reserva atual (R$)</div><input type="number" step="0.01" id="planReserve" onchange="setPlanNum('reserve','planReserve')" /></div>
+            <div><div class="lbl">Guardado neste mês (R$)</div><input type="number" step="0.01" id="planSaved" onchange="setPlanNum('savedMonth','planSaved')" /></div>
+            <div style="grid-column: span 2;">
+              <div class="lbl">Reserva ideal (meses de gastos fixos)</div>
+              <select id="planMonths" onchange="setPlanNum('reserveMonths','planMonths')">
+                <option value="3">3 meses</option>
+                <option value="6">6 meses</option>
+                <option value="12">12 meses</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-emerald" style="width:100%; margin-bottom:14px;" onclick="savedGoalNow()">✓ Guardei a meta deste mês (soma na reserva)</button>
+
+          <div class="lbl" style="font-weight:700; margin-bottom:6px;">💳 Cartões</div>
+          <div id="finCardsList"></div>
+          <div class="form-row" style="margin-top:6px;">
+            <input type="text" id="newCardName" placeholder="Nome (ex: Nubank)" style="flex:1.3; min-width:110px;" />
+            <input type="number" id="newCardDay" placeholder="Fecha dia" style="flex:0.7; min-width:80px;" />
+            <input type="number" step="0.01" id="newCardInvoice" placeholder="Fatura R$" style="flex:0.9; min-width:90px;" />
+            <button class="btn" onclick="addPlanCard()">+</button>
+          </div>
+
+          <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;" />
+          <label class="btn btn-secondary" style="cursor:pointer; width:100%;">
+            📥 Importar plano (.json)
+            <input type="file" accept=".json,application/json" style="display:none;" onchange="importPlanJSON(event)" />
+          </label>
+        </details>
       </div>
 
       <div class="card">
@@ -1098,7 +1224,8 @@
     }
     function monthLabel(key) {
       const p = key.split('-').map(Number);
-      return new Date(p[0], p[1] - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+      const t = new Date(p[0], p[1] - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+      return t.charAt(0).toUpperCase() + t.slice(1);
     }
 
     let _uidc = 0;
@@ -1175,7 +1302,8 @@
           variableExpenses: [
             { id: 801, desc: "Lanche / Açaí", amount: 45, category: "Alimentação / Lanches", date: today }
           ],
-          history: {}
+          history: {},
+          plan: { configured: false, va: 0, savingsGoal: 0, reserve: 0, savedMonth: 0, reserveMonths: 6, cards: [], sim: { aporte: 0, months: 12, rate: 12 } }
         },
         history: {},      // { 'YYYY-MM-DD': { pct, done, total, rr } }
         weekLog: [],      // [{ weekStart, gymDays, hobbies:[{name,days}] }]
@@ -1224,6 +1352,9 @@
       if (!isObj(s.history)) s.history = {};
       if (!isObj(s.loadLog)) s.loadLog = {};
       if (!isObj(s.finance.history)) s.finance.history = {};
+      if (!isObj(s.finance.plan)) s.finance.plan = clone(base.finance.plan);
+      if (!Array.isArray(s.finance.plan.cards)) s.finance.plan.cards = [];
+      if (!isObj(s.finance.plan.sim)) s.finance.plan.sim = clone(base.finance.plan.sim);
       if (!isObj(s.settings)) s.settings = { streakMin: 60 };
       s.settings.streakMin = Number(s.settings.streakMin) || 60;
       s.hobbies.forEach(h => { if (!Array.isArray(h.days) || h.days.length !== 7) h.days = [false, false, false, false, false, false, false]; });
@@ -1372,8 +1503,9 @@
       const prevKey = state.monthKey;
       const inc = sumList(f.incomes), fix = sumList(f.fixedExpenses), vr = sumList(f.variableExpenses);
       if (prevKey && (inc || fix || vr)) {
-        f.history[prevKey] = { income: inc, fixed: fix, variable: vr };
+        f.history[prevKey] = { income: inc, fixed: fix, variable: vr, saved: (f.plan && f.plan.savedMonth) || 0 };
       }
+      if (f.plan) f.plan.savedMonth = 0;
       f.fixedExpenses = f.fixedExpenses.filter(x => x.recurring !== false);
       f.fixedExpenses.forEach(x => x.paid = false);
       f.incomes = f.incomes.filter(x => x.recurring !== false);
@@ -2123,13 +2255,14 @@
           return `
             <div class="check-item">
               <div>
-                <div class="item-title" style="text-transform:capitalize;">${monthLabel(k)}</div>
+                <div class="item-title">${monthLabel(k)}</div>
                 <div class="item-meta">Entradas ${formatBRL(m.income)} • Fixos ${formatBRL(m.fixed)} • Outros ${formatBRL(m.variable)}</div>
               </div>
               <strong style="color:${bal >= 0 ? 'var(--cyan)' : 'var(--danger)'}; font-size:14px;">${formatBRL(bal)}</strong>
             </div>`;
         }).join('');
       }
+      renderFinPlan();
     }
 
     function updateFinanceLimit() {
@@ -2181,6 +2314,360 @@
       }
       saveState();
       renderFinance();
+    }
+
+    // ================= PLANO FINANCEIRO (alertas, ideias, simulador) =================
+    function finMetrics() {
+      const fin = state.finance, plan = fin.plan;
+      const income = sumList(fin.incomes);
+      const fixed = sumList(fin.fixedExpenses);
+      const fixedPend = sumList(fin.fixedExpenses.filter(x => !x.paid));
+      const fixedPendN = fin.fixedExpenses.filter(x => !x.paid).length;
+      const variable = sumList(fin.variableExpenses);
+      const goal = Number(plan.savingsGoal) || 0;
+      const free = income - fixed - goal;
+      return {
+        income, fixed, fixedPend, fixedPendN, variable, goal, free,
+        freeLeft: free - variable,
+        va: Number(plan.va) || 0,
+        reserve: Number(plan.reserve) || 0,
+        saved: Number(plan.savedMonth) || 0
+      };
+    }
+
+    function daysToClosing(day) {
+      const now = new Date(); now.setHours(0, 0, 0, 0);
+      const dim = (y, m) => new Date(y, m + 1, 0).getDate();
+      let y = now.getFullYear(), m = now.getMonth();
+      let target = new Date(y, m, Math.min(day, dim(y, m)));
+      if (target < now) {
+        const t = new Date(y, m + 1, 1);
+        target = new Date(t.getFullYear(), t.getMonth(), Math.min(day, dim(t.getFullYear(), t.getMonth())));
+      }
+      return Math.round((target - now) / 86400000);
+    }
+
+    function buildFinAlerts(M) {
+      const plan = state.finance.plan, A = [];
+      const add = (lvl, icon, title, detail) => A.push({ lvl, icon, title, detail });
+      const today = localISO();
+      const dom = new Date().getDate();
+
+      if (M.income <= 0) {
+        add('amber', '🧩', 'Falta cadastrar sua renda', 'Lance a renda em "Novo Lançamento" ou importe seu plano em ⚙️ Plano financeiro (no fim da página).');
+        return A;
+      }
+
+      const pct = Math.round((M.fixed / M.income) * 100);
+      add(pct > 70 ? 'red' : pct > 50 ? 'amber' : 'green', '📌',
+        `Gastos fixos comprometem ${pct}% da renda`,
+        'Referência da regra 50/30/20: até 50% da renda para o essencial.');
+
+      if (M.free < 0) {
+        add('red', '🔻', `O plano fecha no vermelho: faltam ${formatBRL(-M.free)}`, 'Fixos + meta de poupança passam da renda. Reduza um fixo ou a meta.');
+      } else if (M.variable > 0) {
+        const used = M.free > 0 ? M.variable / M.free : 9;
+        if (used >= 1) add('red', '🛒', `Variáveis estouraram a sobra livre em ${formatBRL(M.variable - M.free)}`, `Sobra livre planejada: ${formatBRL(M.free)}.`);
+        else if (used >= 0.8) add('amber', '🛒', `Você já usou ${Math.round(used * 100)}% da sobra livre`, `Restam ${formatBRL(M.freeLeft)} até o fim do mês.`);
+      }
+
+      (plan.cards || []).forEach(c => {
+        const inv = Number(c.invoice) || 0;
+        const name = escapeHtml(c.name);
+        if (inv > 0 && M.free >= 0) {
+          if (inv > M.free) {
+            add('red', '💳', `Fatura ${c.name} (${formatBRL(inv)}) é maior que a sobra livre (${formatBRL(M.free)})`,
+              'Se ela já inclui fixos que você contou à parte, a conta muda; se não, falta caixa. Pague tudo e evite parcelar a fatura.');
+          } else if (inv > M.free * 0.7) {
+            add('amber', '💳', `Fatura ${c.name} consome ${Math.round((inv / M.free) * 100)}% da sobra livre`, 'Pouca folga para os outros gastos do mês.');
+          }
+        }
+        if (Number(c.closingDay) > 0) {
+          const d = daysToClosing(Number(c.closingDay));
+          if (d <= 3) add('amber', '📅', d === 0 ? `${c.name} fecha hoje` : `${c.name} fecha em ${d} dia${d > 1 ? 's' : ''}`,
+            'Compras feitas depois do fechamento caem na fatura seguinte, com mais prazo para pagar.');
+        }
+        if (c.updated && daysBetween(c.updated, today) > 25) {
+          add('blue', '🔄', `Atualize a fatura do ${c.name}`, `Último valor informado há ${daysBetween(c.updated, today)} dias.`);
+        }
+      });
+
+      if (M.goal > 0) {
+        if (M.saved >= M.goal) add('green', '🐷', 'Meta de poupança do mês guardada ✓', `${formatBRL(M.saved)} guardados.`);
+        else if (dom >= 20) add('amber', '🐷', `Meta de poupança ainda não guardada (faltam ${formatBRL(M.goal - M.saved)})`, 'Guarde antes de acabar o mês: pague-se primeiro.');
+        else add('blue', '🐷', `Guarde ${formatBRL(M.goal - M.saved)} assim que o salário cair`, 'Pagar a si mesmo primeiro evita que a sobra suma no mês.');
+      }
+
+      if (M.fixed > 0) {
+        const months = M.reserve / M.fixed;
+        const target = Number(plan.reserveMonths) || 6;
+        add(months < 3 ? 'red' : months < target ? 'amber' : 'green', '🛟',
+          `Reserva cobre ${months.toFixed(1).replace('.', ',')} ${months >= 0.95 && months < 1.05 ? 'mês' : 'meses'} de fixos`,
+          `Meta: ${target} meses (${formatBRL(M.fixed * target)}).`);
+      }
+
+      if (M.fixedPendN > 0) {
+        add('blue', '⏳', `${M.fixedPendN} gasto${M.fixedPendN > 1 ? 's' : ''} fixo${M.fixedPendN > 1 ? 's' : ''} pendente${M.fixedPendN > 1 ? 's' : ''}`, `${formatBRL(M.fixedPend)} ainda por pagar este mês.`);
+      }
+      return A;
+    }
+
+    function renderDonut(M) {
+      const svg = document.getElementById('finDonut'), leg = document.getElementById('finDonutLegend');
+      if (!svg || !leg) return;
+      const rest = Math.max(0, M.income - M.fixed - M.goal - M.variable);
+      const parts = [
+        { k: 'Fixos', v: M.fixed, c: '#8b5cf6' },
+        { k: 'Poupança', v: M.goal, c: '#10b981' },
+        { k: 'Variáveis', v: M.variable, c: '#f59e0b' },
+        { k: 'Livre', v: rest, c: '#00f5d4' }
+      ];
+      const total = parts.reduce((a, p) => a + p.v, 0);
+      const R = 46, C = 2 * Math.PI * R;
+      let html = `<circle cx="60" cy="60" r="${R}" fill="none" stroke="#1e293b" stroke-width="16"/>`;
+      if (total > 0) {
+        let off = 0;
+        parts.forEach(p => {
+          if (p.v <= 0) return;
+          const len = C * p.v / total;
+          html += `<circle cx="60" cy="60" r="${R}" fill="none" stroke="${p.c}" stroke-width="16" stroke-dasharray="${len.toFixed(2)} ${(C - len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 60 60)"/>`;
+          off += len;
+        });
+      }
+      const over = M.freeLeft < 0;
+      html += `<text x="60" y="55" text-anchor="middle" font-size="7.5" fill="#94a3b8">livre real</text>`;
+      html += `<text x="60" y="69" text-anchor="middle" font-size="10" font-weight="800" fill="${over ? '#ef4444' : '#00f5d4'}">${formatBRL(M.freeLeft)}</text>`;
+      svg.innerHTML = html;
+
+      let l = parts.map(p => `
+        <div class="legend-row"><span class="legend-dot" style="background:${p.c}"></span>${p.k}
+          <span class="lv">${formatBRL(p.v)}</span><span class="lp">${M.income > 0 ? Math.round(p.v / M.income * 100) + '%' : ''}</span></div>`).join('');
+      if (M.va > 0) l += `<div class="legend-note">🍽️ VA de ${formatBRL(M.va)} fica fora das contas acima (alimentação e lazer).</div>`;
+      leg.innerHTML = l;
+    }
+
+    function renderFinIdeas(M) {
+      const el = document.getElementById('finIdeas');
+      if (!el) return;
+      const plan = state.finance.plan;
+      const S = [];
+      const targetMonths = Number(plan.reserveMonths) || 6;
+      const target = M.fixed * targetMonths;
+      const cardsOver = (plan.cards || []).filter(c => (Number(c.invoice) || 0) > Math.max(M.free, 0));
+      const reserveDone = target > 0 && M.reserve >= target;
+
+      S.push({
+        st: cardsOver.length ? 'now' : 'done',
+        title: 'Pague a fatura inteira, sempre',
+        body: cardsOver.length
+          ? `A fatura de ${cardsOver.map(c => escapeHtml(c.name)).join(', ')} passa da sua sobra livre. Prioridade número 1: não entrar no rotativo nem parcelar a fatura, porque esses juros estão entre os mais altos do mercado.`
+          : 'Nenhuma fatura acima da sua sobra livre. Continue pagando o total.'
+      });
+
+      if (target > 0) {
+        const pct = Math.min(100, Math.round(M.reserve / target * 100));
+        const need = Math.max(0, target - M.reserve);
+        const eta = M.goal > 0 && need > 0 ? ` Guardando ${formatBRL(M.goal)}/mês, leva cerca de ${Math.ceil(need / M.goal)} meses.` : '';
+        S.push({
+          st: reserveDone ? 'done' : (cardsOver.length ? 'next' : 'now'),
+          title: `Reserva de emergência: ${targetMonths} meses de fixos`,
+          body: `Meta ${formatBRL(target)} • você tem ${formatBRL(M.reserve)} (${pct}%).${eta}`,
+          bar: pct
+        });
+      } else {
+        S.push({ st: 'next', title: 'Defina sua reserva de emergência', body: 'Cadastre seus gastos fixos para calcular a meta (de 3 a 12 meses deles).' });
+      }
+
+      S.push({
+        st: 'next',
+        title: 'Onde deixar a reserva',
+        body: 'Para a reserva importam liquidez e segurança, não rentabilidade. Confirme a liquidez diária e a cobertura do FGC quando for CDB.',
+        chips: ['Tesouro Selic', 'CDB com liquidez diária (≥100% do CDI)', 'Conta remunerada']
+      });
+
+      if (M.income > 0) {
+        const rate = M.goal / M.income;
+        if (rate < 0.2) {
+          const need20 = M.income * 0.2;
+          S.push({
+            st: 'next',
+            title: `Taxa de poupança: ${Math.round(rate * 100)}% da renda`,
+            body: `Para chegar a 20% (regra 50/30/20) seriam ${formatBRL(need20)}/mês, ou seja, ${formatBRL(need20 - M.goal)} a mais. Veja se algum fixo dá para reduzir ou renegociar.`
+          });
+        } else {
+          S.push({ st: 'done', title: `Taxa de poupança: ${Math.round(rate * 100)}% da renda`, body: 'Acima de 20%. Boa base.' });
+        }
+      }
+
+      S.push({
+        st: 'later',
+        title: 'Depois da reserva cheia: o prazo escolhe o investimento',
+        body: 'Defina o objetivo (viagem, carro, aposentadoria) e em quanto tempo precisa do dinheiro.',
+        chips: ['Até 1 ano: renda fixa com liquidez', '1 a 5 anos: CDB/LCI/LCA, Tesouro IPCA+', '5+ anos: diversificar (ETFs, fundos). Estude antes']
+      });
+
+      el.innerHTML = S.map((s, i) => `
+        <div class="step ${s.st}">
+          <div class="step-num">${s.st === 'done' ? '✓' : (i + 1)}</div>
+          <div style="min-width:0; flex:1;">
+            <div class="step-title">${s.title}</div>
+            <div class="step-body">${s.body}</div>
+            ${s.bar !== undefined ? `<div class="mini-bar"><div style="width:${s.bar}%"></div></div>` : ''}
+            ${(s.chips || []).map(c => `<span class="chip">${c}</span>`).join('')}
+          </div>
+        </div>`).join('');
+    }
+
+    function setVal(id, v) {
+      const e = document.getElementById(id);
+      if (e && document.activeElement !== e) e.value = v;
+    }
+
+    function renderPlanConfig() {
+      const p = state.finance.plan;
+      setVal('planVa', p.va || '');
+      setVal('planGoal', p.savingsGoal || '');
+      setVal('planReserve', p.reserve || '');
+      setVal('planSaved', p.savedMonth || '');
+      setVal('planMonths', String(p.reserveMonths || 6));
+      const list = document.getElementById('finCardsList');
+      if (!list) return;
+      list.innerHTML = (p.cards || []).length === 0
+        ? '<div class="empty-msg" style="padding:8px;">Nenhum cartão cadastrado.</div>'
+        : p.cards.map(c => `
+          <div class="card-row">
+            <div style="flex:1.2; min-width:0; font-weight:700; font-size:13px; word-break:break-word;">${escapeHtml(c.name)}</div>
+            <div style="display:flex; flex-direction:column; width:62px;"><span class="lbl" style="margin:0;">fecha dia</span><input type="number" value="${c.closingDay || ''}" onchange="updatePlanCard(${c.id}, 'closingDay', this.value)" /></div>
+            <div style="display:flex; flex-direction:column; width:96px;"><span class="lbl" style="margin:0;">fatura R$</span><input type="number" step="0.01" value="${c.invoice || ''}" onchange="updatePlanCard(${c.id}, 'invoice', this.value)" /></div>
+            <button class="del-btn" onclick="deletePlanCard(${c.id})">🗑️</button>
+          </div>`).join('');
+    }
+
+    function renderFinPlan() {
+      const el = document.getElementById('finAlerts');
+      if (!el) return;
+      const M = finMetrics();
+      const alerts = buildFinAlerts(M);
+      const order = { red: 0, amber: 1, blue: 2, green: 3 };
+      alerts.sort((a, b) => order[a.lvl] - order[b.lvl]);
+      el.innerHTML = alerts.map(a => `
+        <div class="alert-item ${a.lvl}">
+          <div class="alert-ico">${a.icon}</div>
+          <div><div class="alert-title">${a.title}</div><div class="alert-detail">${a.detail}</div></div>
+        </div>`).join('');
+      const r = alerts.filter(a => a.lvl === 'red').length, am = alerts.filter(a => a.lvl === 'amber').length;
+      document.getElementById('finAlertsBadge').textContent = r + am === 0 ? '✓ tudo certo' : `${r} crítico${r === 1 ? '' : 's'} • ${am} atenção`;
+      renderDonut(M);
+      renderFinIdeas(M);
+      renderPlanConfig();
+      const p = state.finance.plan;
+      setVal('simAporte', p.sim.aporte > 0 ? p.sim.aporte : (M.goal || ''));
+      setVal('simMonths', p.sim.months);
+      setVal('simRate', p.sim.rate);
+      computeSim();
+    }
+
+    function computeSim() {
+      const aporte = parseFloat(document.getElementById('simAporte').value) || 0;
+      const months = Math.max(0, Math.min(600, parseInt(document.getElementById('simMonths').value, 10) || 0));
+      const rate = parseFloat(document.getElementById('simRate').value) || 0;
+      const i = Math.pow(1 + rate / 100, 1 / 12) - 1;
+      const fv = i === 0 ? aporte * months : aporte * ((Math.pow(1 + i, months) - 1) / i);
+      const put = aporte * months;
+      document.getElementById('simResult').innerHTML = months > 0 && aporte > 0
+        ? `Em <strong>${months}</strong> meses, guardando ${formatBRL(aporte)}/mês a ${rate.toString().replace('.', ',')}% ao ano, você teria cerca de <strong>${formatBRL(fv)}</strong><br><span style="color:var(--text-muted); font-size:12px;">Você aporta ${formatBRL(put)} e o rendimento estimado é ${formatBRL(fv - put)}.</span>`
+        : 'Preencha aporte, meses e taxa para simular.';
+    }
+
+    function runSim() {
+      const p = state.finance.plan;
+      p.sim.aporte = parseFloat(document.getElementById('simAporte').value) || 0;
+      p.sim.months = parseInt(document.getElementById('simMonths').value, 10) || 12;
+      p.sim.rate = parseFloat(document.getElementById('simRate').value) || 0;
+      saveState();
+      computeSim();
+    }
+
+    function setPlanNum(key, id) {
+      const v = parseFloat(document.getElementById(id).value);
+      state.finance.plan[key] = isNaN(v) || v < 0 ? 0 : v;
+      state.finance.plan.configured = true;
+      saveState();
+      renderFinance();
+    }
+
+    function savedGoalNow() {
+      const p = state.finance.plan;
+      const rest = Math.max(0, (Number(p.savingsGoal) || 0) - (Number(p.savedMonth) || 0));
+      if (rest <= 0) { showToast(p.savingsGoal > 0 ? 'A meta deste mês já está guardada ✓' : 'Defina a meta de poupança primeiro', 'info'); return; }
+      p.savedMonth = (Number(p.savedMonth) || 0) + rest;
+      p.reserve = (Number(p.reserve) || 0) + rest;
+      p.configured = true;
+      saveState();
+      renderFinance();
+      showToast(`🐷 +${formatBRL(rest)} na reserva`, 'gain');
+    }
+
+    function addPlanCard() {
+      const nameIn = document.getElementById('newCardName');
+      const dayIn = document.getElementById('newCardDay');
+      const invIn = document.getElementById('newCardInvoice');
+      const name = nameIn.value.trim();
+      if (!name) return;
+      const day = Math.min(31, Math.max(0, parseInt(dayIn.value, 10) || 0));
+      state.finance.plan.cards.push({ id: uid(), name, closingDay: day, invoice: parseFloat(invIn.value) || 0, updated: localISO() });
+      state.finance.plan.configured = true;
+      nameIn.value = ''; dayIn.value = ''; invIn.value = '';
+      saveState();
+      renderFinance();
+    }
+
+    function updatePlanCard(id, key, val) {
+      const c = state.finance.plan.cards.find(x => x.id === id);
+      if (!c) return;
+      if (key === 'closingDay') c.closingDay = Math.min(31, Math.max(0, parseInt(val, 10) || 0));
+      else { c.invoice = Math.max(0, parseFloat(val) || 0); c.updated = localISO(); }
+      saveState();
+      renderFinance();
+    }
+
+    function deletePlanCard(id) {
+      state.finance.plan.cards = state.finance.plan.cards.filter(x => x.id !== id);
+      saveState();
+      renderFinance();
+    }
+
+    function importPlanJSON(event) {
+      const input = event.target;
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const d = JSON.parse(e.target.result);
+          if (!isObj(d) || (!d.plan && !d.incomes && !d.fixedExpenses)) throw new Error('formato');
+          if (!confirm('Importar o plano? Isso substitui suas entradas, gastos fixos, cartões e metas atuais (os gastos variáveis do mês ficam).')) { input.value = ''; return; }
+          const today = localISO();
+          const fin = state.finance;
+          if (Array.isArray(d.incomes)) fin.incomes = d.incomes.map(x => ({ id: uid(), desc: String(x.desc || 'Entrada'), amount: Number(x.amount) || 0, recurring: x.recurring !== false, date: today }));
+          if (Array.isArray(d.fixedExpenses)) fin.fixedExpenses = d.fixedExpenses.map(x => ({ id: uid(), desc: String(x.desc || 'Fixo'), amount: Number(x.amount) || 0, category: x.category || 'Moradia / Contas', paid: !!x.paid, recurring: x.recurring !== false, date: today }));
+          if (isObj(d.plan)) {
+            const p = fin.plan, q = d.plan;
+            ['va', 'savingsGoal', 'reserve', 'savedMonth', 'reserveMonths'].forEach(k => { if (q[k] !== undefined) p[k] = Number(q[k]) || 0; });
+            if (isObj(q.sim)) p.sim = Object.assign(p.sim, q.sim);
+            if (Array.isArray(q.cards)) p.cards = q.cards.map(c => ({ id: uid(), name: String(c.name || 'Cartão'), closingDay: Number(c.closingDay) || 0, invoice: Number(c.invoice) || 0, updated: today }));
+          }
+          if (d.monthlyLimit) fin.monthlyLimit = Number(d.monthlyLimit) || fin.monthlyLimit;
+          fin.plan.configured = true;
+          saveState();
+          renderFinance();
+          showToast('Plano importado ✓', 'gain', true);
+        } catch (err) {
+          alert('Arquivo de plano inválido.');
+        }
+        input.value = '';
+      };
+      reader.readAsText(file);
     }
 
     // ================= NAVEGAÇÃO, MODAIS, BACKUP =================
@@ -2280,7 +2767,7 @@
       const s = makeDefaultState();
       s.habits = []; s.routine = []; s.hobbies = []; s.exams = []; s.tasks = [];
       s.gym = { currentWeight: 0, targetWeight: 0, weekDays: [false, false, false, false, false, false, false], workouts: { A: [], B: [], C: [], Cardio: [] } };
-      s.finance = { monthlyLimit: 2000, incomes: [], fixedExpenses: [], variableExpenses: [], history: {} };
+      s.finance = { monthlyLimit: 2000, incomes: [], fixedExpenses: [], variableExpenses: [], history: {}, plan: makeDefaultState().finance.plan };
       state = s;
       saveState();
       renderAll();
